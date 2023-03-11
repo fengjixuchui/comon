@@ -25,13 +25,13 @@
 
 using namespace comon_ext;
 
-extern "C" HRESULT CALLBACK cohelp(IDebugClient *dbgclient, [[maybe_unused]] PCSTR args) {
+extern "C" HRESULT CALLBACK cohelp(IDebugClient * dbgclient, [[maybe_unused]] PCSTR args) {
     wil::com_ptr_t<IDebugControl4> dbgcontrol;
     RETURN_IF_FAILED(dbgclient->QueryInterface(__uuidof(IDebugControl4), dbgcontrol.put_void()));
 
     dbgcontrol->OutputWide(DEBUG_OUTPUT_NORMAL, L"==============================================================\n");
-    dbgcontrol->OutputWide(DEBUG_OUTPUT_NORMAL, L" comon v%d.%d.%d.%d - Copyright 2022 Sebastian Solnica\n", EXT_MAJOR_VER, EXT_MINOR_VER,
-                           EXT_PATCH_VER, EXT_TWEAK_VER);
+    dbgcontrol->OutputWide(DEBUG_OUTPUT_NORMAL, L" comon v%d.%d.%d.%d - Copyright 2023 Sebastian Solnica\n", EXT_MAJOR_VER, EXT_MINOR_VER,
+        EXT_PATCH_VER, EXT_TWEAK_VER);
     dbgcontrol->OutputWide(DEBUG_OUTPUT_NORMAL, L"==============================================================\n\n");
 
     dbgcontrol->OutputWide(DEBUG_OUTPUT_NORMAL, LR"(Available commands:
@@ -51,45 +51,27 @@ extern "C" HRESULT CALLBACK cohelp(IDebugClient *dbgclient, [[maybe_unused]] PCS
   !cometa showc <clsid>
       - shows virtual tables registered for a given CLSID (COM class ID)
 
-  !comon attach
+  !comon attach [[-i|-e] {clsid1} {clsid2} ...]
       - starts COM monitor for the active process. If you're debugging a 32-bit WOW64
         process in a 64-bit debugger, make sure you set the effective CPU architecture to x86
-        (.effmach x86)
+        (.effmach x86), use -i to configure an including filter (monitors only the provided CLSIDs)
+        or -e to configure an excluding filter (monitors all CLSIDs except for the provided ones)
   !comon detach
       - stops COM monitor for the active process.
   !comon pause
       - pauses COM monitoring for the active process.
   !comon resume
       - resumes COM monitoring for the active process.
+  !comon status
+      - shows the current monitoring status. It also lists all the virtual tables registered
+        for a given process providing their IIDs and CLSIDs
 
-  !colog
-      - shows current log filter settings.
-  !colog none
-      - do not log QueryInterface calls for any CLSIDs. This command will clear previously
-        set filters.
-  !colog include <clsid>
-      - log QueryInterface calls only for a specific CLSID. You may call this command
-        multiple times with various CLSIDs, adding them to the inclusion list. If, before
-        calling this command, colog was in EXCLUDING mode, the filter list will be cleared. 
-  !colog exclude <clsid>
-      - log QueryInterface calls for CLSIDs different than the given CLSID. You may call
-        this command multiple times with various CLSIDs, adding them to the exclusion list.
-        If, before calling this command, colog was in INCLUDING mode, the filter list will
-        be cleared. 
-  !colog all
-      - log QueryInterface calls for all the CLSIDs. This command will clear previously
-        set filters.
-
-  !cobp <clsid> <iid> <method_name>
-      - creates a breakpoint on a method (identified by its name) in a given COM
-        interface (IID) in a given COM class (CLSID)
-  !cobp <clsid> <iid< <method_num>
-      - creates a breakpoint on a method (identified by its index) in a given COM
-        interface (IID) in a given COM class (CLSID)
-
-  !coadd <clsid> <iid> <vtable_address>
+  !coreg [--force] [--nosave] <clsid> <iid> <vtable_address>
       - manually add a virtual table address to the COM monitor and bind them with
-        a given COM interface (IID) and COM class (CLSID)
+        a given COM interface (IID) and COM class (CLSID). If the --force option is
+        provided, the virtual table will be added even if it's already registered. If
+        the --nosave option is provided, the virtual table will not be saved to the
+        cometa.db3 file.
 ==============================================================
 )");
 

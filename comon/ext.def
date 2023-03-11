@@ -7,8 +7,6 @@ EXPORTS
      DebugExtensionUninitialize
 
      cometa
-     colog
-     cobp
-     cobl
-	 cohelp
+     cohelp
      comon
+     coreg
