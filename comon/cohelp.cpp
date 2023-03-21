@@ -50,6 +50,8 @@ extern "C" HRESULT CALLBACK cohelp(IDebugClient * dbgclient, [[maybe_unused]] PC
         interface methods (if available) and virtual tables registered for this IID.
   !cometa showc <clsid>
       - shows virtual tables registered for a given CLSID (COM class ID)
+  !cometa showm <module_name>
+      - shows virtual tables registered for a given module (DLL or EXE file)
 
   !comon attach [[-i|-e] {clsid1} {clsid2} ...]
       - starts COM monitor for the active process. If you're debugging a 32-bit WOW64
@@ -65,6 +67,13 @@ extern "C" HRESULT CALLBACK cohelp(IDebugClient * dbgclient, [[maybe_unused]] PC
   !comon status
       - shows the current monitoring status. It also lists all the virtual tables registered
         for a given process providing their IIDs and CLSIDs
+
+  !cobp [--before|--after|--always|--trace-only] <clsid> <iid> <method_name|method_number>
+      - sets a cobreakpoint (COM breakpoint) on a given COM method. When you create a cobreakpoint,
+        comon will print the parameter values and return value of the method (if metadata is available).
+        Additionally, the cobreakpoint can make the debugger stop before (--before), after (--after), or
+        before and after (--always) the method is called. If you only want to see the parameter values,
+        use the --trace-only option. To remove a cobreakpoint, use the bc with the cobreakpoint ID.
 
   !coreg [--force] [--nosave] <clsid> <iid> <vtable_address>
       - manually add a virtual table address to the COM monitor and bind them with

@@ -20,6 +20,7 @@
 #include <optional>
 #include <deque>
 #include <unordered_set>
+#include <unordered_map>
 #include <filesystem>
 #include <variant>
 #include <functional>
@@ -34,6 +35,8 @@ namespace fs = std::filesystem;
 
 namespace comon_ext
 {
+
+static const std::unordered_map<int, std::wstring_view> vt_names;
 
 enum class cotype_kind
 {
@@ -167,6 +170,8 @@ public:
     std::vector<std::tuple<std::wstring, CLSID, ULONG64>> find_vtables_by_iid(const IID& iid);
 
     std::vector<std::tuple<std::wstring, IID, ULONG64>> find_vtables_by_clsid(const CLSID& clsid);
+    
+    std::vector<std::tuple<ULONG, CLSID>> find_clsids_by_module_name(const std::wstring& module_name);
 
     std::optional<method_collection> get_type_methods(const IID& iid);
     std::optional<method_arg_collection> get_type_method_args(const comethod& method);
